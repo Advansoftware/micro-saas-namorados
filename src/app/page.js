@@ -12,16 +12,31 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [hasAutoStarted, setHasAutoStarted] = useState(false);
 
   const { photos, playlist } = contentData;
 
-  // Hook para detectar se estamos no cliente
+  // Hook para detectar se estamos no cliente e inicializar música aleatória
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    // Selecionar uma música aleatória ao carregar a página
+    if (!hasAutoStarted && playlist.length > 0) {
+      const randomTrack = Math.floor(Math.random() * playlist.length);
+      setCurrentTrack(randomTrack);
+      setHasAutoStarted(true);
+
+      // Aguardar um momento antes de começar a tocar automaticamente
+      setTimeout(() => {
+        // A música vai começar automaticamente quando o player carregar
+        // devido ao sistema de auto-play implementado no MusicPlayer
+      }, 1000);
+    }
+  }, [playlist.length, hasAutoStarted]);
 
   const handleTrackSelect = (trackIndex) => {
     setCurrentTrack(trackIndex);
+    // A música vai começar automaticamente devido ao useEffect no MusicPlayer
   };
 
   // Valores fixos para os corações de fundo para evitar problemas de hidratação

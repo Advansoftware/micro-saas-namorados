@@ -12,11 +12,11 @@ import {
   VolumeX,
   Heart,
   Shuffle,
-  Repeat
+  Repeat,
+  Loader2
 } from 'lucide-react';
 
-export default function MusicPlayer({ playlist }) {
-  const [currentTrack, setCurrentTrack] = useState(0);
+export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onPlayStateChange }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
   const [isMuted, setIsMuted] = useState(false);
@@ -27,9 +27,12 @@ export default function MusicPlayer({ playlist }) {
   const [isShuffled, setIsShuffled] = useState(false);
   const [isRepeated, setIsRepeated] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
+  const previousTrackRef = useRef(currentTrack);
 
   const currentSong = playlist[currentTrack];
 
@@ -49,24 +52,49 @@ export default function MusicPlayer({ playlist }) {
     },
   };
 
+  // Detectar mudança de track e iniciar carregamento
+  useEffect(() => {
+    if (previousTrackRef.current !== currentTrack) {
+      previousTrackRef.current = currentTrack;
+      setIsLoading(true);
+      setIsLoaded(false);
+      setShouldAutoPlay(true);
+      setProgress(0);
+    }
+  }, [currentTrack]);
+
   const onReady = (event) => {
     playerRef.current = event.target;
     setIsLoaded(true);
+    setIsLoading(false);
     setDuration(event.target.getDuration());
     if (volume !== 50) {
       event.target.setVolume(volume);
+    }
+
+    // Auto-play se necessário
+    if (shouldAutoPlay) {
+      setTimeout(() => {
+        event.target.playVideo();
+        setShouldAutoPlay(false);
+      }, 500);
     }
   };
 
   const onStateChange = (event) => {
     if (event.data === 1) { // playing
       setIsPlaying(true);
+      setIsLoading(false);
+      onPlayStateChange?.(true);
       startProgressTracking();
     } else if (event.data === 2) { // paused
       setIsPlaying(false);
+      onPlayStateChange?.(false);
       stopProgressTracking();
     } else if (event.data === 0) { // ended
       handleNext();
+    } else if (event.data === 3) { // buffering
+      setIsLoading(true);
     }
   };
 
@@ -91,6 +119,7 @@ export default function MusicPlayer({ playlist }) {
     if (isPlaying) {
       playerRef.current.pauseVideo();
     } else {
+      setIsLoading(true);
       playerRef.current.playVideo();
     }
   };
@@ -99,14 +128,14 @@ export default function MusicPlayer({ playlist }) {
     const nextTrack = isShuffled
       ? Math.floor(Math.random() * playlist.length)
       : (currentTrack + 1) % playlist.length;
-    setCurrentTrack(nextTrack);
-    setProgress(0);
+    onTrackChange?.(nextTrack);
+    setShouldAutoPlay(true);
   };
 
   const handlePrevious = () => {
     const prevTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-    setCurrentTrack(prevTrack);
-    setProgress(0);
+    onTrackChange?.(prevTrack);
+    setShouldAutoPlay(true);
   };
 
   const handleVolumeChange = (newVolume) => {
@@ -154,6 +183,7 @@ export default function MusicPlayer({ playlist }) {
       {/* Player invisível do YouTube */}
       <div className="hidden">
         <YouTube
+          key={`player-${currentTrack}-${currentSong?.youtubeId}`}
           videoId={currentSong?.youtubeId}
           opts={opts}
           onReady={onReady}
@@ -252,7 +282,34 @@ export default function MusicPlayer({ playlist }) {
                 className="rounded-lg object-cover"
                 sizes="48px"
               />
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/30 to-transparent" />
+
+              {/* Overlay de carregamento na capa */}
+              {isLoading && (
+                <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Loader2 className="text-rose-400" size={20} />
+                  </motion.div>
+                </div>
+              )}
+
+              {/* Overlay visual de reprodução */}
+              {!isLoading && (
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/30 to-transparent" />
+              )}
+
+              {/* Indicador de reprodução */}
+              {!isLoading && isPlaying && (
+                <div className="absolute inset-0 rounded-lg flex items-center justify-center">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-3 h-3 bg-rose-400 rounded-full"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="min-w-0 flex-1">
@@ -321,7 +378,7 @@ export default function MusicPlayer({ playlist }) {
 
               <button
                 onClick={togglePlay}
-                disabled={!isLoaded}
+                disabled={!isLoaded && !isLoading}
                 className="p-2 md:p-3 bg-rose-500 hover:bg-rose-600 rounded-full text-white transition-all hover:scale-105 disabled:opacity-50"
               >
                 {isPlaying ? <Pause size={18} className="md:w-5 md:h-5" /> : <Play size={18} className="md:w-5 md:h-5 ml-0.5" />}
