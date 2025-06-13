@@ -120,6 +120,14 @@
   "playlist": [
     {
       "id": 1,
+      "title": "Apaixonado por você",
+      "artist": "Gino e Geno",
+      "youtubeId": "8X_hLM4tbmU",
+      "duration": "4:12",
+      "cover": "https://img.youtube.com/vi/8X_hLM4tbmU/maxresdefault.jpg"
+    },
+    {
+      "id": 2,
       "title": "Make You Feel My Love",
       "artist": "Adele",
       "youtubeId": "0put0_a--Ng",
@@ -127,7 +135,7 @@
       "cover": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
     },
     {
-      "id": 2,
+      "id": 3,
       "title": "Just the Way You Are",
       "artist": "Bruno Mars",
       "youtubeId": "LjhCEhWiKXk",
@@ -135,7 +143,7 @@
       "cover": "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300&h=300&fit=crop"
     },
     {
-      "id": 3,
+      "id": 4,
       "title": "Marry Me",
       "artist": "Train",
       "youtubeId": "Yt-KMPvgKPo",
@@ -143,20 +151,12 @@
       "cover": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=300&h=300&fit=crop"
     },
     {
-      "id": 4,
+      "id": 5,
       "title": "At Last",
       "artist": "Etta James",
       "youtubeId": "S-cbOl96RFM",
       "duration": "3:01",
       "cover": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop"
-    },
-    {
-      "id": 5,
-      "title": "Can't Help Myself",
-      "artist": "Four Tops",
-      "youtubeId": "s3bksUSPB4c",
-      "duration": "2:57",
-      "cover": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
     }
   ],
   "messages": [
@@ -189,6 +189,7 @@
     "autoSlideInterval": 4500,
     "autoPlayMusic": true,
     "showCaptions": true,
-    "theme": "romantic-dark"
+    "theme": "romantic-dark",
+    "initialTrack": 0
   }
 }

@@ -38,13 +38,24 @@ export default function HomePage() {
   useEffect(() => {
     setMounted(true);
 
-    // Selecionar uma música aleatória ao carregar a página
+    // Selecionar uma música inicial
     if (!hasAutoStarted && slugData?.playlist?.length > 0) {
-      const randomTrack = Math.floor(Math.random() * slugData.playlist.length);
-      setCurrentTrack(randomTrack);
+      let initialTrack;
+
+      // Verificar se existe uma música inicial específica definida
+      if (typeof slugData.settings?.initialTrack === 'number' &&
+        slugData.settings.initialTrack >= 0 &&
+        slugData.settings.initialTrack < slugData.playlist.length) {
+        initialTrack = slugData.settings.initialTrack;
+      } else {
+        // Fallback para música aleatória
+        initialTrack = Math.floor(Math.random() * slugData.playlist.length);
+      }
+
+      setCurrentTrack(initialTrack);
       setHasAutoStarted(true);
     }
-  }, [slugData?.playlist?.length, hasAutoStarted]);
+  }, [slugData?.playlist?.length, slugData?.settings?.initialTrack, hasAutoStarted]);
 
   const handleTrackSelect = (trackIndex) => {
     setCurrentTrack(trackIndex);

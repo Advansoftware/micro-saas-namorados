@@ -24,6 +24,34 @@ export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
     setMounted(true);
   }, []);
 
+  // Hook para controle por teclado
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goToPrev();
+        setIsAutoPlaying(false);
+        // Reativa o autoplay após um tempo
+        setTimeout(() => setIsAutoPlaying(true), 2000);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goToNext();
+        setIsAutoPlaying(false);
+        // Reativa o autoplay após um tempo
+        setTimeout(() => setIsAutoPlaying(true), 2000);
+      }
+    };
+
+    // Só adiciona o listener se o componente estiver montado e for desktop
+    if (mounted && window.innerWidth >= 768) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mounted]);
+
   useEffect(() => {
     if (!isAutoPlaying || isDragging) return;
 
@@ -112,15 +140,35 @@ export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
           transition={{ duration: 0.7, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          <Image
-            src={photos[currentIndex]?.url}
-            alt={photos[currentIndex]?.alt}
-            fill
-            className="object-cover"
-            priority={currentIndex === 0}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
-            draggable={false}
-          />
+          {/* Imagem de fundo desfocada */}
+          <div className="absolute inset-0">
+            <Image
+              src={photos[currentIndex]?.url}
+              alt=""
+              fill
+              className="object-cover blur-xl scale-110"
+              priority={currentIndex === 0}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+              draggable={false}
+            />
+            <div className="absolute inset-0 bg-black/40" />
+          </div>
+
+          {/* Imagem principal sem corte - usando todo o espaço da moldura */}
+          <div className="absolute inset-0 p-4">
+            <div className="relative w-full h-full">
+              <Image
+                src={photos[currentIndex]?.url}
+                alt={photos[currentIndex]?.alt}
+                fill
+                className="object-contain rounded-lg shadow-2xl"
+                priority={currentIndex === 0}
+                sizes="(max-width: 768px) 90vw, (max-width: 1200px) 60vw, 50vw"
+                draggable={false}
+              />
+            </div>
+          </div>
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
           {/* Overlay de feedback visual durante o swipe */}
