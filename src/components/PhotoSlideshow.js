@@ -2,10 +2,16 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import Image from 'next/image';
 
 export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -29,6 +35,16 @@ export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
     setCurrentIndex(index);
   };
 
+  // Valores fixos para as animações, evitando Math.random()
+  const heartAnimations = [
+    { x: '10%', delay: 0 },
+    { x: '25%', delay: 0.8 },
+    { x: '45%', delay: 1.6 },
+    { x: '65%', delay: 2.4 },
+    { x: '80%', delay: 3.2 },
+    { x: '90%', delay: 4.0 }
+  ];
+
   return (
     <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden rounded-2xl bg-gradient-to-br from-rose-900/20 to-purple-900/20 backdrop-blur-sm border border-rose-500/20">
       <AnimatePresence mode="wait">
@@ -40,10 +56,13 @@ export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
           transition={{ duration: 0.7, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          <img
+          <Image
             src={photos[currentIndex]?.url}
             alt={photos[currentIndex]?.alt}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority={currentIndex === 0}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         </motion.div>
@@ -93,8 +112,8 @@ export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
             key={index}
             onClick={() => goToSlide(index)}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentIndex
-                ? 'bg-rose-400 w-8'
-                : 'bg-white/50 hover:bg-white/80'
+              ? 'bg-rose-400 w-8'
+              : 'bg-white/50 hover:bg-white/80'
               }`}
             onMouseEnter={() => setIsAutoPlaying(false)}
             onMouseLeave={() => setIsAutoPlaying(true)}
@@ -102,30 +121,31 @@ export default function PhotoSlideshow({ photos, autoInterval = 5000 }) {
         ))}
       </div>
 
-      {/* Efeitos de partículas de coração */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0, x: Math.random() * 100 + '%', y: '100%' }}
-            animate={{
-              opacity: [0, 1, 0],
-              scale: [0, 1, 0],
-              y: [100, -20],
-              x: `${Math.random() * 100}%`
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.8,
-              ease: "easeOut"
-            }}
-            className="absolute"
-          >
-            <Heart className="text-rose-400/30" size={16} />
-          </motion.div>
-        ))}
-      </div>
+      {/* Efeitos de partículas de coração - só renderiza no cliente */}
+      {mounted && (
+        <div className="absolute inset-0 pointer-events-none">
+          {heartAnimations.map((animation, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0, x: animation.x, y: '100%' }}
+              animate={{
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+                y: [100, -20],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: animation.delay,
+                ease: "easeOut"
+              }}
+              className="absolute"
+            >
+              <Heart className="text-rose-400/30" size={16} />
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

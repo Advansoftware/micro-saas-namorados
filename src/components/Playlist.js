@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Heart, Music } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Playlist({ playlist, currentTrack, isPlaying, onTrackSelect }) {
   const [likedSongs, setLikedSongs] = useState(new Set());
@@ -42,10 +43,13 @@ export default function Playlist({ playlist, currentTrack, isPlaying, onTrackSel
               }`}
           >
             <div className="relative">
-              <img
+              <Image
                 src={song.cover}
                 alt={song.title}
-                className="w-12 h-12 rounded-lg object-cover"
+                width={48}
+                height={48}
+                className="rounded-lg object-cover"
+                sizes="48px"
               />
               <div className={`absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center transition-opacity ${currentTrack === index && isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                 }`}>

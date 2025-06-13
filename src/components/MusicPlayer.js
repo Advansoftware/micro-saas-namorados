@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import YouTube from 'react-youtube';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   Play,
   Pause,
@@ -190,10 +191,13 @@ export default function MusicPlayer({ playlist }) {
           {/* Info da música */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="relative">
-              <img
+              <Image
                 src={currentSong?.cover}
                 alt={currentSong?.title}
-                className="w-12 h-12 rounded-lg object-cover"
+                width={48}
+                height={48}
+                className="rounded-lg object-cover"
+                sizes="48px"
               />
               <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/30 to-transparent" />
             </div>

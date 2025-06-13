@@ -10,63 +10,71 @@ import contentData from '@/data/content.json';
 export default function Home() {
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showPlaylist, setShowPlaylist] = useState(false);
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [mounted, setMounted] = useState(false);
+  const [showPlaylist, setShowPlaylist] = useState(false);n  const [mounted, setMounted] = useState(false);
 
   const { photos, playlist } = contentData;
 
-  // Hook para detectar se estamos no cliente e obter dimensões da janela
+  // Hook para detectar se estamos no cliente
   useEffect(() => {
     setMounted(true);
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleTrackSelect = (trackIndex) => {
     setCurrentTrack(trackIndex);
   };
 
-  // Não renderizar os corações animados até que o componente seja montado no cliente
+  // Valores fixos para os corações de fundo para evitar problemas de hidratação
+  const backgroundHearts = [
+    { x: '10%', y: '100%', size: 15, duration: 15, delay: 0 },
+    { x: '25%', y: '100%', size: 12, duration: 18, delay: 1 },
+    { x: '40%', y: '100%', size: 20, duration: 12, delay: 2 },
+    { x: '55%', y: '100%', size: 18, duration: 16, delay: 3 },
+    { x: '70%', y: '100%', size: 14, duration: 14, delay: 4 },
+    { x: '85%', y: '100%', size: 16, duration: 20, delay: 0.5 },
+    { x: '15%', y: '100%', size: 13, duration: 17, delay: 1.5 },
+    { x: '30%', y: '100%', size: 19, duration: 13, delay: 2.5 },
+    { x: '50%', y: '100%', size: 11, duration: 19, delay: 3.5 },
+    { x: '75%', y: '100%', size: 17, duration: 15, delay: 4.5 },
+    { x: '90%', y: '100%', size: 14, duration: 16, delay: 0.8 },
+    { x: '20%', y: '100%', size: 16, duration: 18, delay: 1.8 },
+    { x: '35%', y: '100%', size: 12, duration: 14, delay: 2.8 },
+    { x: '60%', y: '100%', size: 18, duration: 17, delay: 3.8 },
+    { x: '80%', y: '100%', size: 15, duration: 19, delay: 4.8 },
+    { x: '5%', y: '100%', size: 13, duration: 16, delay: 1.2 },
+    { x: '45%', y: '100%', size: 17, duration: 15, delay: 2.2 },
+    { x: '65%', y: '100%', size: 14, duration: 18, delay: 3.2 },
+    { x: '85%', y: '100%', size: 19, duration: 13, delay: 4.2 },
+    { x: '95%', y: '100%', size: 11, duration: 20, delay: 0.3 }
+  ];
+
+  // Renderizar corações animados de fundo apenas no cliente
   const renderAnimatedHearts = () => {
     if (!mounted) return null;
 
-    return [...Array(20)].map((_, i) => (
+    return backgroundHearts.map((heart, i) => (
       <motion.div
         key={i}
         initial={{
-          x: Math.random() * windowSize.width,
-          y: windowSize.height + 100,
+          x: heart.x,
+          y: heart.y,
           opacity: 0,
           scale: 0
         }}
         animate={{
-          y: -100,
+          y: '-100px',
           opacity: [0, 0.3, 0],
           scale: [0, 1, 0],
           rotate: 360
         }}
         transition={{
-          duration: Math.random() * 10 + 10,
+          duration: heart.duration,
           repeat: Infinity,
-          delay: Math.random() * 5,
+          delay: heart.delay,
           ease: "linear"
         }}
         className="absolute"
       >
-        <Heart className="text-rose-500/20" size={Math.random() * 20 + 10} />
+        <Heart className="text-rose-500/20" size={heart.size} />
       </motion.div>
     ));
   };
@@ -204,7 +212,7 @@ export default function Home() {
                 >
                   <div className="text-center">
                     <blockquote className="text-white text-lg mb-4 italic">
-                      "{item.message}"
+                      &ldquo;{item.message}&rdquo;
                     </blockquote>
                     <cite className="text-rose-400 text-sm font-medium">
                       — {item.author}
