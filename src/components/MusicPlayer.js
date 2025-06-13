@@ -18,7 +18,7 @@ import {
 
 export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onPlayStateChange }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(50);
+  const [volume, setVolume] = useState(100); // Mudança: 100% em vez de 50%
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -29,18 +29,45 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
   const previousTrackRef = useRef(currentTrack);
+  const autoplayAttempts = useRef(0);
 
   const currentSong = playlist[currentTrack];
+
+  // Detectar primeira interação do usuário (estratégia Netflix)
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setUserInteracted(true);
+      setAutoplayBlocked(false);
+      // Remove os listeners após primeira interação
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+    };
+
+    if (!userInteracted) {
+      document.addEventListener('click', handleUserInteraction);
+      document.addEventListener('touchstart', handleUserInteraction);
+      document.addEventListener('keydown', handleUserInteraction);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('keydown', handleUserInteraction);
+    };
+  }, [userInteracted]);
 
   const opts = {
     height: '0',
     width: '0',
     playerVars: {
-      autoplay: 0,
+      autoplay: userInteracted ? 1 : 0, // Só ativar autoplay após interação
       controls: 0,
       disablekb: 1,
       enablejsapi: 1,
@@ -56,10 +83,11 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
   useEffect(() => {
     if (previousTrackRef.current !== currentTrack) {
       previousTrackRef.current = currentTrack;
-      setIsLoading(true);
       setIsLoaded(false);
       setShouldAutoPlay(true);
       setProgress(0);
+      setAutoplayBlocked(false);
+      autoplayAttempts.current = 0;
     }
   }, [currentTrack]);
 
@@ -68,16 +96,59 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
     setIsLoaded(true);
     setIsLoading(false);
     setDuration(event.target.getDuration());
-    if (volume !== 50) {
+    if (volume !== 100) { // Mudança: verificar se é diferente de 100% em vez de 50%
       event.target.setVolume(volume);
     }
 
-    // Auto-play se necessário
-    if (shouldAutoPlay) {
-      setTimeout(() => {
-        event.target.playVideo();
+    // Estratégia de autoplay inteligente (como Netflix)
+    if (shouldAutoPlay && userInteracted) {
+      attemptAutoplay();
+    }
+  };
+
+  const attemptAutoplay = async () => {
+    if (!playerRef.current || autoplayAttempts.current >= 3) {
+      setAutoplayBlocked(true);
+      setShouldAutoPlay(false);
+      return;
+    }
+
+    autoplayAttempts.current++;
+
+    try {
+      // Tentar tocar
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('Timeout')), 2000);
+
+        playerRef.current.playVideo();
+
+        // Verificar se começou a tocar dentro de 1 segundo
+        const checkPlay = setTimeout(() => {
+          if (playerRef.current.getPlayerState() === 1) {
+            clearTimeout(timeout);
+            resolve();
+          } else {
+            clearTimeout(timeout);
+            reject(new Error('Autoplay failed'));
+          }
+        }, 1000);
+      });
+
+      setShouldAutoPlay(false);
+      setAutoplayBlocked(false);
+      console.log('✅ Autoplay funcionou!');
+
+    } catch (error) {
+      console.log(`❌ Tentativa ${autoplayAttempts.current} de autoplay falhou:`, error.message);
+
+      // Tentar novamente após um delay
+      if (autoplayAttempts.current < 3) {
+        setTimeout(() => attemptAutoplay(), 1000 * autoplayAttempts.current);
+      } else {
+        setAutoplayBlocked(true);
         setShouldAutoPlay(false);
-      }, 500);
+        console.log('🚫 Autoplay definitivamente bloqueado - mostrando botão de play');
+      }
     }
   };
 
@@ -85,16 +156,23 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
     if (event.data === 1) { // playing
       setIsPlaying(true);
       setIsLoading(false);
+      setAutoplayBlocked(false);
       onPlayStateChange?.(true);
       startProgressTracking();
     } else if (event.data === 2) { // paused
       setIsPlaying(false);
       onPlayStateChange?.(false);
       stopProgressTracking();
+      setIsLoading(false);
     } else if (event.data === 0) { // ended
+      setIsLoading(false);
       handleNext();
     } else if (event.data === 3) { // buffering
-      setIsLoading(true);
+      if (isPlaying || shouldAutoPlay) {
+        setIsLoading(true);
+      }
+    } else if (event.data === 5) { // cued/ready
+      setIsLoading(false);
     }
   };
 
@@ -116,10 +194,16 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
   const togglePlay = () => {
     if (!playerRef.current) return;
 
+    // Marcar que usuário interagiu
+    if (!userInteracted) {
+      setUserInteracted(true);
+    }
+
     if (isPlaying) {
       playerRef.current.pauseVideo();
     } else {
       setIsLoading(true);
+      setAutoplayBlocked(false);
       playerRef.current.playVideo();
     }
   };
@@ -129,13 +213,13 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
       ? Math.floor(Math.random() * playlist.length)
       : (currentTrack + 1) % playlist.length;
     onTrackChange?.(nextTrack);
-    setShouldAutoPlay(true);
+    setShouldAutoPlay(userInteracted); // Só autoplay se usuário já interagiu
   };
 
   const handlePrevious = () => {
     const prevTrack = (currentTrack - 1 + playlist.length) % playlist.length;
     onTrackChange?.(prevTrack);
-    setShouldAutoPlay(true);
+    setShouldAutoPlay(userInteracted); // Só autoplay se usuário já interagiu
   };
 
   const handleVolumeChange = (newVolume) => {
@@ -148,7 +232,7 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
 
   const toggleMute = () => {
     if (isMuted) {
-      handleVolumeChange(50);
+      handleVolumeChange(100); // Mudança: restaurar para 100% em vez de 50%
     } else {
       handleVolumeChange(0);
     }
@@ -379,9 +463,29 @@ export default function MusicPlayer({ playlist, currentTrack, onTrackChange, onP
               <button
                 onClick={togglePlay}
                 disabled={!isLoaded && !isLoading}
-                className="p-2 md:p-3 bg-rose-500 hover:bg-rose-600 rounded-full text-white transition-all hover:scale-105 disabled:opacity-50"
+                className={`p-2 md:p-3 rounded-full text-white transition-all hover:scale-105 disabled:opacity-50 relative ${autoplayBlocked
+                  ? 'bg-gradient-to-r from-rose-500 to-pink-500 animate-pulse shadow-lg shadow-rose-500/50'
+                  : 'bg-rose-500 hover:bg-rose-600'
+                  }`}
+                title={autoplayBlocked ? "Clique para começar a tocar música" : ""}
               >
                 {isPlaying ? <Pause size={18} className="md:w-5 md:h-5" /> : <Play size={18} className="md:w-5 md:h-5 ml-0.5" />}
+
+                {/* Tooltip de autoplay bloqueado */}
+                {autoplayBlocked && !isPlaying && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap z-10 border border-rose-500/30"
+                  >
+                    <div className="text-center">
+                      <div className="text-rose-400 font-medium">🎵 Toque para ouvir</div>
+                      <div className="text-gray-300">Autoplay foi bloqueado</div>
+                    </div>
+                    {/* Seta do tooltip */}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                  </motion.div>
+                )}
               </button>
 
               <button

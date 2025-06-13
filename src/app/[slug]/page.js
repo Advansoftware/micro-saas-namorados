@@ -5,8 +5,9 @@ import { Heart, Sparkles, Calendar } from 'lucide-react';
 import PhotoSlideshow from '@/components/PhotoSlideshow';
 import MusicPlayer from '@/components/MusicPlayer';
 import Playlist from '@/components/Playlist';
+import { notFound } from 'next/navigation';
 
-export default function HomePage() {
+export default function SlugPage({ params }) {
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlaylist, setShowPlaylist] = useState(false);
@@ -15,24 +16,28 @@ export default function HomePage() {
   const [slugData, setSlugData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Carregar dados padrão (bruno-maria)
+  // Carregar dados do slug específico
   useEffect(() => {
-    const loadDefaultData = async () => {
+    const loadSlugData = async () => {
       try {
-        const response = await fetch('/api/playlist/bruno-maria');
-        if (response.ok) {
-          const data = await response.json();
-          setSlugData(data);
+        const resolvedParams = await params;
+        const response = await fetch(`/api/playlist/${resolvedParams.slug}`);
+        if (!response.ok) {
+          notFound();
+          return;
         }
+        const data = await response.json();
+        setSlugData(data);
       } catch (error) {
-        console.error('Erro ao carregar dados padrão:', error);
+        console.error('Erro ao carregar dados:', error);
+        notFound();
       } finally {
         setLoading(false);
       }
     };
 
-    loadDefaultData();
-  }, []);
+    loadSlugData();
+  }, [params]);
 
   // Hook para detectar se estamos no cliente e inicializar música aleatória
   useEffect(() => {
@@ -64,16 +69,9 @@ export default function HomePage() {
     );
   }
 
-  // Se não tem dados, mostrar fallback
+  // Se não tem dados, retorna null (notFound já foi chamado)
   if (!slugData) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
-        <div className="text-center text-white">
-          <Heart className="mx-auto text-rose-400 mb-4" size={48} />
-          <p>Carregando...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const { title, subtitle, photos, playlist, messages, settings } = slugData;
@@ -182,7 +180,7 @@ export default function HomePage() {
       </motion.header>
 
       {/* Main Content */}
-      <main className="relative z-10 px-4 pb-32">
+      <main className="relative z-10 px-4 pb-40 md:pb-32">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Photo Slideshow */}
@@ -194,7 +192,7 @@ export default function HomePage() {
             >
               <PhotoSlideshow
                 photos={photos}
-                autoInterval={settings?.autoSlideInterval || 5000}
+                autoInterval={settings.autoSlideInterval}
               />
             </motion.div>
 
@@ -231,7 +229,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {messages?.map((item, index) => (
+              {messages.map((item, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
@@ -263,7 +261,7 @@ export default function HomePage() {
                     <Heart className="text-rose-400" size={16} />
                   </motion.div>
                 </motion.div>
-              )) || []}
+              ))}
             </div>
           </motion.section>
 
@@ -327,7 +325,7 @@ export default function HomePage() {
 
       {/* Music Player */}
       <MusicPlayer
-        playlist={playlist || []}
+        playlist={playlist}
         currentTrack={currentTrack}
         onTrackChange={setCurrentTrack}
         onPlayStateChange={setIsPlaying}

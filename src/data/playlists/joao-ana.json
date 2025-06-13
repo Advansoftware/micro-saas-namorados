@@ -1,0 +1,52 @@
+{
+  "title": "João & Ana",
+  "subtitle": "Celebrando nosso amor único 💕",
+  "photos": [
+    {
+      "id": 1,
+      "url": "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&h=600&fit=crop",
+      "alt": "Mãos entrelaçadas",
+      "caption": "De mãos dadas para sempre 💕"
+    },
+    {
+      "id": 2,
+      "url": "https://images.unsplash.com/photo-1469504512102-900f29606341?w=800&h=600&fit=crop",
+      "alt": "Buquê de flores",
+      "caption": "Flores para você 🌹"
+    }
+  ],
+  "playlist": [
+    {
+      "id": 1,
+      "title": "Thinking Out Loud",
+      "artist": "Ed Sheeran",
+      "youtubeId": "lp-EO5I60KA",
+      "duration": "4:41",
+      "cover": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 2,
+      "title": "A Thousand Years",
+      "artist": "Christina Perri",
+      "youtubeId": "rtOvBOTyX00",
+      "duration": "4:45",
+      "cover": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=300&h=300&fit=crop"
+    }
+  ],
+  "messages": [
+    {
+      "message": "Nossa história é a mais bela que conheço 📖",
+      "author": "Escrita com carinho"
+    },
+    {
+      "message": "Juntos somos mais fortes e felizes 💪",
+      "author": "Time perfeito"
+    }
+  ],
+  "settings": {
+    "autoSlideInterval": 6000,
+    "autoPlayMusic": true,
+    "showCaptions": true,
+    "theme": "romantic-dark"
+  }
+}

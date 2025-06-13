@@ -1,0 +1,194 @@
+{
+  "title": "Bruno & Renata",
+  "subtitle": "Nosso amor cresce a cada dia 🌺",
+  "photos": [
+    {
+      "id": 1,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.08.jpeg",
+      "alt": "Nossa primeira foto juntos",
+      "caption": "O começo de tudo... nossa primeira selfie juntos 💕"
+    },
+    {
+      "id": 2,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.09.jpeg",
+      "alt": "Momentos especiais",
+      "caption": "Cada momento ao seu lado é único 🌟"
+    },
+    {
+      "id": 3,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.09 (1).jpeg",
+      "alt": "Sorrisos compartilhados",
+      "caption": "Seus sorrisos iluminam meus dias ☀️"
+    },
+    {
+      "id": 4,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.10.jpeg",
+      "alt": "Aventuras juntos",
+      "caption": "Descobrindo o mundo lado a lado 🌍"
+    },
+    {
+      "id": 5,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.14.jpeg",
+      "alt": "Cumplicidade",
+      "caption": "Nossa conexão especial 💫"
+    },
+    {
+      "id": 6,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.41.jpeg",
+      "alt": "Amor verdadeiro",
+      "caption": "Quando encontrei minha alma gêmea 💖"
+    },
+    {
+      "id": 7,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.41 (1).jpeg",
+      "alt": "Momentos de carinho",
+      "caption": "Carinho que transborda 🥰"
+    },
+    {
+      "id": 8,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.41 (2).jpeg",
+      "alt": "Diversão a dois",
+      "caption": "Rindo juntos da vida 😄"
+    },
+    {
+      "id": 9,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.41 (3).jpeg",
+      "alt": "Companheirismo",
+      "caption": "Melhores amigos e amantes 👫"
+    },
+    {
+      "id": 10,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.42.jpeg",
+      "alt": "Passeios românticos",
+      "caption": "Explorando juntos novos lugares 🗺️"
+    },
+    {
+      "id": 11,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.42 (1).jpeg",
+      "alt": "Olhares apaixonados",
+      "caption": "Nos seus olhos encontro meu lar 👀💕"
+    },
+    {
+      "id": 12,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.42 (2).jpeg",
+      "alt": "Abraços calorosos",
+      "caption": "Seu abraço é meu lugar favorito 🤗"
+    },
+    {
+      "id": 13,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.42 (3).jpeg",
+      "alt": "Felicidade em dobro",
+      "caption": "Juntos somos mais felizes 😊"
+    },
+    {
+      "id": 14,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.42 (4).jpeg",
+      "alt": "Conquistas juntos",
+      "caption": "Celebrando cada vitória a dois 🎉"
+    },
+    {
+      "id": 15,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.42 (5).jpeg",
+      "alt": "Crescendo juntos",
+      "caption": "Evoluindo como casal e como pessoas 🌱"
+    },
+    {
+      "id": 16,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.43.jpeg",
+      "alt": "Amor duradouro",
+      "caption": "Construindo nossa história de amor 📖"
+    },
+    {
+      "id": 17,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.43 (1).jpeg",
+      "alt": "Sonhos compartilhados",
+      "caption": "Sonhando e realizando juntos 🌙✨"
+    },
+    {
+      "id": 18,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.43 (2).jpeg",
+      "alt": "Futuro brilhante",
+      "caption": "O melhor ainda está por vir 🌈"
+    },
+    {
+      "id": 19,
+      "url": "/bruno-renata/WhatsApp Image 2025-06-13 at 18.43.43 (3).jpeg",
+      "alt": "Para sempre",
+      "caption": "Você e eu, para toda eternidade 💍"
+    }
+  ],
+  "playlist": [
+    {
+      "id": 1,
+      "title": "Make You Feel My Love",
+      "artist": "Adele",
+      "youtubeId": "0put0_a--Ng",
+      "duration": "3:32",
+      "cover": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 2,
+      "title": "Just the Way You Are",
+      "artist": "Bruno Mars",
+      "youtubeId": "LjhCEhWiKXk",
+      "duration": "3:40",
+      "cover": "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 3,
+      "title": "Marry Me",
+      "artist": "Train",
+      "youtubeId": "Yt-KMPvgKPo",
+      "duration": "3:56",
+      "cover": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 4,
+      "title": "At Last",
+      "artist": "Etta James",
+      "youtubeId": "S-cbOl96RFM",
+      "duration": "3:01",
+      "cover": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 5,
+      "title": "Can't Help Myself",
+      "artist": "Four Tops",
+      "youtubeId": "s3bksUSPB4c",
+      "duration": "2:57",
+      "cover": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
+    }
+  ],
+  "messages": [
+    {
+      "message": "Cada dia ao seu lado é uma nova descoberta 🌟",
+      "author": "Meu amor verdadeiro"
+    },
+    {
+      "message": "Você fez minha vida mais colorida e cheia de alegria 🌈",
+      "author": "Para sempre sua"
+    },
+    {
+      "message": "Nossos sonhos se tornaram realidade juntos 💫",
+      "author": "Companheiro de vida"
+    },
+    {
+      "message": "Obrigado por ser minha parceira em todas as aventuras ✨",
+      "author": "Seu eterno admirador"
+    },
+    {
+      "message": "Com você, até os momentos simples se tornam especiais 💝",
+      "author": "Bruno"
+    },
+    {
+      "message": "Você é minha pessoa favorita no mundo inteiro 🥰",
+      "author": "Para minha Renata"
+    }
+  ],
+  "settings": {
+    "autoSlideInterval": 4500,
+    "autoPlayMusic": true,
+    "showCaptions": true,
+    "theme": "romantic-dark"
+  }
+}
