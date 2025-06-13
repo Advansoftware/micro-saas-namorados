@@ -1,0 +1,82 @@
+{
+  "photos": [
+    {
+      "id": 1,
+      "url": "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&h=600&fit=crop",
+      "alt": "Casal romântico ao pôr do sol",
+      "caption": "Nossos momentos mais especiais ❤️"
+    },
+    {
+      "id": 2,
+      "url": "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&h=600&fit=crop",
+      "alt": "Jantar romântico",
+      "caption": "Jantares inesquecíveis 🥂"
+    },
+    {
+      "id": 3,
+      "url": "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&h=600&fit=crop",
+      "alt": "Casal na praia",
+      "caption": "Aventuras juntos 🌊"
+    },
+    {
+      "id": 4,
+      "url": "https://images.unsplash.com/photo-1469504512102-900f29606341?w=800&h=600&fit=crop",
+      "alt": "Buquê de flores",
+      "caption": "Flores para você 🌹"
+    },
+    {
+      "id": 5,
+      "url": "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&h=600&fit=crop",
+      "alt": "Mãos entrelaçadas",
+      "caption": "De mãos dadas para sempre 💕"
+    }
+  ],
+  "playlist": [
+    {
+      "id": 1,
+      "title": "Perfect",
+      "artist": "Ed Sheeran",
+      "youtubeId": "2Vv-BfVoq4g",
+      "duration": "4:23",
+      "cover": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 2,
+      "title": "All of Me",
+      "artist": "John Legend",
+      "youtubeId": "450p7goxZqg",
+      "duration": "4:29",
+      "cover": "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 3,
+      "title": "Thinking Out Loud",
+      "artist": "Ed Sheeran",
+      "youtubeId": "lp-EO5I60KA",
+      "duration": "4:41",
+      "cover": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 4,
+      "title": "A Thousand Years",
+      "artist": "Christina Perri",
+      "youtubeId": "rtOvBOTyX00",
+      "duration": "4:45",
+      "cover": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=300&h=300&fit=crop"
+    },
+    {
+      "id": 5,
+      "title": "Make You Feel My Love",
+      "artist": "Adele",
+      "youtubeId": "0put0_a--Ng",
+      "duration": "3:32",
+      "cover": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop"
+    }
+  ],
+  "settings": {
+    "autoSlideInterval": 5000,
+    "autoPlayMusic": false,
+    "showCaptions": true,
+    "theme": "romantic-dark"
+  }
+}
