@@ -10,7 +10,8 @@ import contentData from '@/data/content.json';
 export default function Home() {
   const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showPlaylist, setShowPlaylist] = useState(false);n  const [mounted, setMounted] = useState(false);
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const { photos, playlist } = contentData;
 

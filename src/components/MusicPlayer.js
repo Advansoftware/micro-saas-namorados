@@ -26,6 +26,7 @@ export default function MusicPlayer({ playlist }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [isRepeated, setIsRepeated] = useState(false);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
 
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
@@ -160,11 +161,62 @@ export default function MusicPlayer({ playlist }) {
         />
       </div>
 
+      {/* Controle de volume popup para mobile */}
+      {showVolumeSlider && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          className="absolute bottom-full right-4 mb-2 md:hidden"
+        >
+          <div className="bg-gray-800/95 rounded-xl p-4 border border-rose-500/30 backdrop-blur-md shadow-lg">
+            <div className="flex flex-col items-center gap-3">
+              <span className="text-rose-400 text-sm font-medium">{volume}%</span>
+
+              {/* Slider vertical customizado */}
+              <div className="relative w-6 h-32 bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-rose-500 to-rose-400 rounded-full transition-all duration-200"
+                  style={{ height: `${volume}%` }}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume}
+                  onChange={(e) => handleVolumeChange(Number(e.target.value))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  style={{
+                    writingMode: 'bt-lr',
+                    WebkitAppearance: 'slider-vertical'
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={toggleMute}
+                className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50"
+              >
+                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Overlay para fechar volume slider */}
+      {showVolumeSlider && (
+        <div
+          className="fixed inset-0 z-[-1] md:hidden"
+          onClick={() => setShowVolumeSlider(false)}
+        />
+      )}
+
       <div className="px-4 py-3">
         {/* Barra de progresso */}
         <div className="mb-3">
           <div className="flex items-center gap-2 text-xs text-gray-400">
-            <span>{formatTime(progress)}</span>
+            <span className="hidden sm:block">{formatTime(progress)}</span>
             <div className="flex-1 group">
               <input
                 type="range"
@@ -172,9 +224,9 @@ export default function MusicPlayer({ playlist }) {
                 max="100"
                 value={duration > 0 ? (progress / duration) * 100 : 0}
                 onChange={(e) => handleProgressChange(Number(e.target.value))}
-                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer 
-                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 
-                          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-rose-500 
+                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer
+                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
+                          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-rose-500
                           [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-all
                           [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:shadow-lg
                           group-hover:[&::-webkit-slider-thumb]:opacity-100 [&::-webkit-slider-thumb]:opacity-0"
@@ -183,11 +235,12 @@ export default function MusicPlayer({ playlist }) {
                 }}
               />
             </div>
-            <span>{currentSong?.duration || "0:00"}</span>
+            <span className="hidden sm:block">{currentSong?.duration || "0:00"}</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        {/* Layout principal do player */}
+        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-0">
           {/* Info da música */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="relative">
@@ -201,6 +254,7 @@ export default function MusicPlayer({ playlist }) {
               />
               <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/30 to-transparent" />
             </div>
+
             <div className="min-w-0 flex-1">
               <h3 className="text-white font-medium truncate text-sm">
                 {currentSong?.title}
@@ -208,10 +262,18 @@ export default function MusicPlayer({ playlist }) {
               <p className="text-gray-400 text-xs truncate">
                 {currentSong?.artist}
               </p>
+              {/* Tempo visível no mobile */}
+              <div className="flex items-center gap-1 text-xs text-gray-500 md:hidden">
+                <span>{formatTime(progress)}</span>
+                <span>/</span>
+                <span>{currentSong?.duration || "0:00"}</span>
+              </div>
             </div>
+
+            {/* Botão de curtir - mobile */}
             <button
               onClick={() => setIsLiked(!isLiked)}
-              className="text-gray-400 hover:text-rose-400 transition-colors"
+              className="text-gray-400 hover:text-rose-400 transition-colors md:hidden"
             >
               <Heart
                 size={16}
@@ -221,48 +283,89 @@ export default function MusicPlayer({ playlist }) {
           </div>
 
           {/* Controles centrais */}
-          <div className="flex items-center gap-2 px-4">
-            <button
-              onClick={() => setIsShuffled(!isShuffled)}
-              className={`p-2 rounded-full transition-all hover:scale-105 ${isShuffled ? 'text-rose-400' : 'text-gray-400 hover:text-white'
-                }`}
-            >
-              <Shuffle size={16} />
-            </button>
+          <div className="flex items-center justify-between md:justify-center gap-1 md:gap-2 md:px-4">
+            {/* Controles secundários mobile - esquerda */}
+            <div className="flex items-center gap-1 md:hidden">
+              <button
+                onClick={() => setIsShuffled(!isShuffled)}
+                className={`p-1.5 rounded-full transition-all ${isShuffled ? 'text-rose-400' : 'text-gray-400 hover:text-white'
+                  }`}
+              >
+                <Shuffle size={14} />
+              </button>
+              <button
+                onClick={() => setIsRepeated(!isRepeated)}
+                className={`p-1.5 rounded-full transition-all ${isRepeated ? 'text-rose-400' : 'text-gray-400 hover:text-white'
+                  }`}
+              >
+                <Repeat size={14} />
+              </button>
+            </div>
 
-            <button
-              onClick={handlePrevious}
-              className="p-2 text-gray-400 hover:text-white transition-all hover:scale-105"
-            >
-              <SkipBack size={20} />
-            </button>
+            {/* Controles principais */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsShuffled(!isShuffled)}
+                className={`p-2 rounded-full transition-all hover:scale-105 ${isShuffled ? 'text-rose-400' : 'text-gray-400 hover:text-white'
+                  } hidden md:block`}
+              >
+                <Shuffle size={16} />
+              </button>
 
-            <button
-              onClick={togglePlay}
-              disabled={!isLoaded}
-              className="p-3 bg-rose-500 hover:bg-rose-600 rounded-full text-white transition-all hover:scale-105 disabled:opacity-50"
-            >
-              {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
-            </button>
+              <button
+                onClick={handlePrevious}
+                className="p-2 text-gray-400 hover:text-white transition-all hover:scale-105"
+              >
+                <SkipBack size={18} className="md:w-5 md:h-5" />
+              </button>
 
-            <button
-              onClick={handleNext}
-              className="p-2 text-gray-400 hover:text-white transition-all hover:scale-105"
-            >
-              <SkipForward size={20} />
-            </button>
+              <button
+                onClick={togglePlay}
+                disabled={!isLoaded}
+                className="p-2 md:p-3 bg-rose-500 hover:bg-rose-600 rounded-full text-white transition-all hover:scale-105 disabled:opacity-50"
+              >
+                {isPlaying ? <Pause size={18} className="md:w-5 md:h-5" /> : <Play size={18} className="md:w-5 md:h-5 ml-0.5" />}
+              </button>
 
-            <button
-              onClick={() => setIsRepeated(!isRepeated)}
-              className={`p-2 rounded-full transition-all hover:scale-105 ${isRepeated ? 'text-rose-400' : 'text-gray-400 hover:text-white'
-                }`}
-            >
-              <Repeat size={16} />
-            </button>
+              <button
+                onClick={handleNext}
+                className="p-2 text-gray-400 hover:text-white transition-all hover:scale-105"
+              >
+                <SkipForward size={18} className="md:w-5 md:h-5" />
+              </button>
+
+              <button
+                onClick={() => setIsRepeated(!isRepeated)}
+                className={`p-2 rounded-full transition-all hover:scale-105 ${isRepeated ? 'text-rose-400' : 'text-gray-400 hover:text-white'
+                  } hidden md:block`}
+              >
+                <Repeat size={16} />
+              </button>
+            </div>
+
+            {/* Volume mobile - direita */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setShowVolumeSlider(!showVolumeSlider)}
+                className="p-1.5 text-gray-400 hover:text-white transition-colors"
+              >
+                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              </button>
+            </div>
           </div>
 
-          {/* Controle de volume */}
-          <div className="flex items-center gap-2 flex-1 justify-end min-w-0">
+          {/* Controle de volume desktop + botão de curtir */}
+          <div className="hidden md:flex items-center gap-2 flex-1 justify-end min-w-0">
+            <button
+              onClick={() => setIsLiked(!isLiked)}
+              className="text-gray-400 hover:text-rose-400 transition-colors mr-2"
+            >
+              <Heart
+                size={16}
+                className={isLiked ? 'fill-rose-400 text-rose-400' : ''}
+              />
+            </button>
+
             <button
               onClick={toggleMute}
               className="text-gray-400 hover:text-white transition-colors"
@@ -276,8 +379,8 @@ export default function MusicPlayer({ playlist }) {
               value={volume}
               onChange={(e) => handleVolumeChange(Number(e.target.value))}
               className="w-20 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer
-                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 
-                        [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white 
+                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
+                        [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
                         [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-all
                         [&::-webkit-slider-thumb]:hover:scale-110"
               style={{
